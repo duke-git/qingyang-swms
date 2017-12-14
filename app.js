@@ -5,6 +5,7 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const compression = require('compression');
+const config = require('./config/config');
 
 let routes = require('./routes');
 let app = express();
@@ -18,7 +19,7 @@ app.use(cookieParser());
 routes(app);
 let log = require('./utils/logHelper');
 log.use(app);
-
+app.set('superSecret', config.secretKey); // token secretKey
 
 
 // catch 404 and forward to error handler
@@ -29,7 +30,7 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
 	console.log('500 err====',err);
     res.status(err.status || 500);
     res.send({
