@@ -1,7 +1,7 @@
 const User = require('../../models/user');
 
 /**
- * 系统用户管理
+ * system user service
  * @returns {promise}
  */
 module.exports = {
@@ -9,6 +9,8 @@ module.exports = {
         return User.sync().then(() => {
             return User.create({
                 uid: user.uid,
+                roleId: user.roleId,
+                privilegeId: user.privilegeId,
                 name: user.name,
                 password: user.password,
                 email: user.email
@@ -16,7 +18,7 @@ module.exports = {
         });
     },
 
-    listUser: (query) => {
+    listUsers: (query) => {
         let params = {
             where: query
         };

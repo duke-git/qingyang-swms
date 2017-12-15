@@ -1,18 +1,22 @@
 const Sequelize = require('sequelize');
 const sequelizeTool = require('./sequelize');
 const Role = require('./role');
-const Privilege = require('./privilege');
 
 /**
- * 系统用户管理
+ * 系统菜单管理
  * @type {*|{charset, collate}}
  */
-const User = sequelizeTool.define('user', {
+const Menu = sequelizeTool.define('menu', {
     uid: {
       type: Sequelize.STRING,
       allowNull: false,
       primaryKey: true,
       unique: true,
+    },
+    parentId: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        field: 'parent_id'
     },
     roleId: {
         type: Sequelize.STRING,
@@ -23,34 +27,29 @@ const User = sequelizeTool.define('user', {
             key:   'uid'
         }
     },
-    privilegeId: {
+    privilegeIds: {
         type: Sequelize.STRING,
         allowNull: false,
-        field: 'privilege_id',
-        references: {
-            model: Privilege,
-            key:   'uid'
-        }
+        field: 'privilege_ids'
     },
     name: {
         type: Sequelize.STRING,
         allowNull: false,
     },
-    password: {
+    label: {
         type: Sequelize.STRING,
         allowNull: false,
     },
-    email: {
+    url: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
     },
-    createdAt: {
-      type: Sequelize.DATE
-    },
-    updatedAt: {
-      type: Sequelize.DATE
+    status: {
+        type: Sequelize.STRING,
+        allowNull: true,
     }
+
 }, {charset: "utf8"});
 
-module.exports = User;
+module.exports = Menu;
 

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const userCtrl = require('../service/user/user');
+const userCtrl = require('../controllers/admin/user');
 const util = require('../utils/util');
 
 /**
@@ -12,12 +12,12 @@ const util = require('../utils/util');
  */
 router.route('/users')
     .post( function(req, res, next) {
-        let {name, password, email} = req.body;
+        let {roleId, privilegeId, name, password, email} = req.body;
 
-        if (!name || !password || !email) {
+        if (!roleId || !privilegeId || !name || !password || !email) {
             res.status(400).send({
                 success: false,
-                message: 'Params name, password, email are required'
+                message: 'Params roleId, privilegeId, priname, password, email are required'
             });
             return;
         }
@@ -25,7 +25,7 @@ router.route('/users')
         userCtrl.getUserByEmail(email).then(ress => {
             if (ress.length === 0) {
                 let uid = util.uuid();
-                let user = {uid, name, password, email};
+                let user = {uid, roleId, privilegeId, name, password, email};
 
                 userCtrl.saveUser(user).then(result => {
                     res.send({
@@ -54,7 +54,7 @@ router.route('/users')
         
     })
     .get(function(req, res) {
-        userCtrl.listUser({}).then(result => {
+        userCtrl.listUsers({}).then(result => {
             res.send({
                 success: true,
                 message:"Success to query user",
@@ -69,4 +69,22 @@ router.route('/users')
         })
     });
 
-    module.exports = router;
+
+router.route('/user/:userId')
+    .get(function(req, res) {
+        userCtrl.getUserById(req.params.userId).then(result => {
+            res.send({
+                success: true,
+                message:"Success to query user",
+                data: result
+            });
+        }, err => {
+            console.log(err);
+            res.status(500).send({
+                success: false,
+                message: 'Failed to query user'
+            });
+        })
+    });
+
+module.exports = router;

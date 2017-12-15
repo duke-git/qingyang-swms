@@ -6,7 +6,7 @@ const token = require('../middlewares/token');
 
 const express = require('express');
 const jwt    = require('jsonwebtoken');
-const userCtrl = require('../service/user/user');
+const userCtrl = require('../service/admin/user');
 
 module.exports = function(app) {
 
@@ -16,8 +16,8 @@ module.exports = function(app) {
     })
 
     /**
-     * authenticate a user
-     * /api/authenticate => desc: authenticate usermethod: post; return: user token
+     * authenticate a admin
+     * /api/authenticate => desc: authenticate admin; method: post; return: token
      */
     app.use('/api/authenticate', function (req, res, next) {
         let {name, password} = req.body;
@@ -60,7 +60,13 @@ module.exports = function(app) {
             });
         });
     });
-    
+
+    // role operation
+    app.use('/api', require('./role'));
+    app.use('/api', require('./privilege'));
+    app.use('/api', require('./user'));
+    app.use('/api', require('./menu'));
+
     // user operation
-    app.use('/api', token.checkToken, require('./user'));
+    //app.use('/api', token.checkToken, require('./user'));
 };
