@@ -4,7 +4,7 @@ const config = {
             host: 'localhost',
             DBName: 'swms',
             userName: 'root',
-            password: ''
+            password: '123456'
         },
         secretkey: 'iqingyang_swms',
         apiHost: 'http://127.0.0.1'
@@ -14,7 +14,7 @@ const config = {
             host: 'localhost',
             DBName: 'swms',
             userName: 'root',
-            password: ''
+            password: '123456'
         },
         secretkey: 'iqingyang_swms',
         apiHost: 'http://127.0.0.1'

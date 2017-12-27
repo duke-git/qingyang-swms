@@ -19,21 +19,24 @@ module.exports = function(app) {
      * authenticate a admin
      * /api/authenticate => desc: authenticate admin; method: post; return: token
      */
-    app.use('/api/authenticate', function (req, res, next) {
-        let {name, password} = req.body;
+    app.use('/api/login', function (req, res, next) {
 
-        userCtrl.getUserByEmail(name).then(ress => {
+        let {username, password} = req.body;
+
+        userCtrl.getUserByEmail(username).then(ress => {
             let user = ress[0];
 
             if (!user) {
                 res.send({
                     success: false,
+                    code: 10001,
                     message: 'Authentication failed. User not found.'
                 });
             } else if(user) {
                 if(user.password != password) {
                     res.send({
                         success: false,
+                        code: 10002,
                         message: 'Authentication failed. Wrong password.'
                     });
                 }else {
@@ -47,7 +50,7 @@ module.exports = function(app) {
 
                     res.cookie('token', token, { expires: new Date(Date.now() + 900000)});
                     res.send({
-                        success: false,
+                        success: true,
                         message: 'Authentication success.',
                         token: token
                     });
@@ -56,7 +59,8 @@ module.exports = function(app) {
         }, err => {
             res.status(500).send({
                 success: false,
-                message: 'Authentication failed. Wrong password.' + err
+                code: 10003,
+                message: 'Authentication failed.' + err
             });
         });
     });

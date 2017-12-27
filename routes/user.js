@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-
+const jwt    = require('jsonwebtoken');
+const config = require('../config/config');
 const userCtrl = require('../controllers/admin/user');
 const util = require('../utils/util');
 
@@ -85,6 +86,42 @@ router.route('/user/:userId')
                 message: 'Failed to query user'
             });
         })
+    });
+
+router.route('/user/info')
+    .get(function(req, res) {
+        let token = req.headers['x-access-token'] || req.cookies.token || req.params.token;
+        if (!token) {
+            res.status(400).send({
+                success: false,
+                message: 'token is required'
+            });
+            return;
+        }
+        jwt.verify(token, config.secretkey, function(err, decoded) {
+            if (err) {
+                return res.send({
+                    success: false,
+                    message: 'Failed to authenticate token.'
+                });
+            } else {
+                let userId = decoded.uid;
+                userCtrl.getUserById(userId).then(result => {
+                    res.send({
+                        success: true,
+                        message:"Success to get user",
+                        data: result
+                    });
+                }, err => {
+                    console.log(err);
+                    res.status(500).send({
+                        success: false,
+                        message: 'Failed to get user'
+                    });
+                });
+
+            }
+        });
     });
 
 module.exports = router;
