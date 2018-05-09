@@ -15,33 +15,28 @@ module.exports = {
     },
 
     getMenuByUser: user => {
-        let currentUser = user[0];
-        let privilegeId = currentUser ? currentUser.privilegeId : "";
+
+        let privilegeId = user ? user.privilegeId : "";
 
         return new Promise(function (resolve, reject) {
             let res = [];
-            let menuItem = {};
-
-            if(!currentUser) {
+            if(!privilegeId) {
                 resolve(res);
             }else {
-                menuService.getMenuByUser(currentUser).then(menus => {
+                menuService.listMenus({}).then(menus => {
                     let res = [];
-                    let menuItem = {};
-
                     _.map(menus, function (item) {
                         let privilegeIds = item.privilegeIds.split(';');
                         if(privilegeIds.includes(privilegeId)){
-                            res.push(item);
+                            res.push(item.url);
                         }
                     });
                     resolve(res);
                 }).catch(err => {
                     reject(err);
-                })
+                });
             }
         });
-
     },
 
     getSubMenus: parentId => {

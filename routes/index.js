@@ -6,7 +6,8 @@ const token = require('../middlewares/token');
 
 const express = require('express');
 const jwt    = require('jsonwebtoken');
-const userCtrl = require('../service/admin/user');
+const userCtrl = require('../controllers/admin/user');
+const menuCtrl = require('../controllers/admin/menu');
 
 module.exports = function(app) {
 
@@ -40,20 +41,33 @@ module.exports = function(app) {
                         message: 'Authentication failed. Wrong password.'
                     });
                 }else {
-                    const payload = {
-                        uid: user.uid
-                    };
 
-                    let token = jwt.sign(payload, config.secretkey, {
-                        expiresIn: '24h' // expires in 24 hours
+                    menuCtrl.getMenuByUser(user).then(menus => {
+                        const payload = {
+                            uid: user.uid
+                        };
+
+                        let token = jwt.sign(payload, config.secretkey, {
+                            expiresIn: '24h' // expires in 24 hours
+                        });
+
+                        res.cookie('token', token, { expires: new Date(Date.now() + 900000)});
+                        res.send({
+                            success: true,
+                            message: 'Authentication success.',
+                            token: token,
+                            info: {
+                                menus: menus
+                            }
+                        });
+                    }, err => {
+                        res.status(500).send({
+                            success: false,
+                            code: 10004,
+                            message: 'Can not get user menus.' + err
+                        });
                     });
 
-                    res.cookie('token', token, { expires: new Date(Date.now() + 900000)});
-                    res.send({
-                        success: true,
-                        message: 'Authentication success.',
-                        token: token
-                    });
                 }
             }
         }, err => {

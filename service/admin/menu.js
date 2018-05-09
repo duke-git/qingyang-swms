@@ -30,6 +30,8 @@ module.exports = {
     },
 
     getMenuByUser: user => {
+        let privilegeId = user.privilege_id;
+
         let params = {
             where: {
                 roleId: user.roleId

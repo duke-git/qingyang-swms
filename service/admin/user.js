@@ -45,6 +45,6 @@ module.exports = {
         return User.sync().then(function () {
             return User.findAll(params);
         });
-    }
+    },
 
 }
